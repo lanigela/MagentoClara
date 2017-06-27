@@ -1,7 +1,10 @@
 var config = {
-    map: {
-        '*': {
-            claraplayer:            'js/claraplayer.min'
+    paths: {
+        "claraplayer":  "js/claraplayer.min"
+    },
+    shim: {
+        "claraplayer": {
+            exports: "claraplayer"
         }
     }
 };
