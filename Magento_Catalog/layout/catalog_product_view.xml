@@ -10,7 +10,7 @@
         <referenceContainer name="content">
             <container name="product.info.media" htmlTag="div" htmlClass="product media" after="product.info.main">
                 <remove name="product.info.media.image"/>
-                <block class="Magento\Framework\View\Element\Template" name="product.info.media.claraplayer" template="Magento_Catalog::ClaraPlayer.phtml"/>
+                <block class="Magento\Framework\View\Element\Template" name="product.info.media.image" template="Magento_Catalog::ClaraPlayer.phtml"/>
             </container>
         </referenceContainer>
     </body>
