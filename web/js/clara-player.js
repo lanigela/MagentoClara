@@ -5,7 +5,7 @@
 
 define([
   'jquery',
-  'claraplayer'
+  'claraplayer',
   'jquery/ui',
 ], function($, claraPlayer) {
   $.widget('clara.player', {
