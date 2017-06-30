@@ -18,7 +18,7 @@ define([
     },
 
     _create: function () {
-      var clara = player('clara-player');
+      var clara = claraPlayer('clara-player');
       clara.on('loaded', function() {
         console.log('Clara player is loaded and ready');
       });
