@@ -12,6 +12,5 @@
                 <remove name="product.info.media.image"/>
                 <block class="Magento\Framework\View\Element\Template" name="product.info.media.image" template="Exocortex_ClaraPlayer::ClaraPlayer.phtml"/>
             </container-->
-        <referenceBlock name="product.info.addtocart" remove="true"/>
     </body>
 </page>
