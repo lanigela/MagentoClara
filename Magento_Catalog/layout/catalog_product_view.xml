@@ -8,7 +8,7 @@
 <page xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xsi:noNamespaceSchemaLocation="urn:magento:framework:View/Layout/etc/page_configuration.xsd">
     <body>
         <referenceContainer name="content">
-          <remove name="product.info.main" />
+          <container name="product.info.main" remove="true"/>
             <!--container name="product.info.media" htmlTag="div" htmlClass="product media" after="product.info.main">
                 <remove name="product.info.media.image"/>
                 <block class="Magento\Framework\View\Element\Template" name="product.info.media.image" template="Exocortex_ClaraPlayer::ClaraPlayer.phtml"/>
