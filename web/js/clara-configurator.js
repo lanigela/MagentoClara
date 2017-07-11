@@ -22,16 +22,12 @@ define([
       optionConfig: null
     },
 
-    _init: function () {
+    _init: function initClaraConfigurator() {
 
     },
 
-    _create: function () {
+    _create: function createClaraConfigurator() {
       console.log(this.options.optionConfig);
-    },
-
-    _OnClick: function ($this, $widget) {
-
     }
 
   });
