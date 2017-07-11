@@ -17,6 +17,11 @@
   <!--container name="product.info.form.content" as="product_info_form_content">
     <block class="Magento\Bundle\Block\Catalog\Product\View\Type\Bundle" name="product.info.clara.configurator" as="clara_configurator" before="addtocart" template="Magento_Bundle::catalog/product/view/type/bundle/ClaraConfigurator.phtml"/>
   </container-->
-  <container name="product.info.media" remove="true"/>
   <container name="bundle.options.container" remove="true"/>
+  <referenceContainer name="content">
+    <container name="product.info.media" htmlTag="div" htmlClass="product media" after="product.info.main">
+        <remove name="product.info.media.image"/>
+        <block class="Magento\Framework\View\Element\Template" name="product.info.media.image" template="Exocortex_ClaraPlayer::ClaraPlayer.phtml"/>
+    </container>
+  </referenceContainer>
 </page>
