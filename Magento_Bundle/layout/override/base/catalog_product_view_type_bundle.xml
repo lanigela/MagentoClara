@@ -10,7 +10,7 @@
   <container name="bundle.product.claraConfigurator.wrapper">
     <block class="Magento\Bundle\Block\Catalog\Product\View\Type\Bundle" name="product.info.clara.configurator" as="clara_configurator" template="Magento_Bundle::catalog/product/view/type/bundle/ClaraConfigurator.phtml"/>
   </container>
-  <move element="bundle.product.claraConfigurator.wrapper" destination="product.info.form.options" before="-" />
+  <move element="bundle.product.claraConfigurator.wrapper" destination="product.info.options.wrapper" before="-" />
   <!--container name="product.info.form.content" as="product_info_form_content">
     <block class="Magento\Bundle\Block\Catalog\Product\View\Type\Bundle" name="product.info.clara.configurator" as="clara_configurator" before="addtocart" template="Magento_Bundle::catalog/product/view/type/bundle/ClaraConfigurator.phtml"/>
   </container-->
