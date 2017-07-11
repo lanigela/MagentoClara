@@ -9,7 +9,6 @@
 $product = $block->getProduct();
 ?>
 <?php if ($product->isSaleable() && $block->hasOptions()):?>
-    <?php if (count($options)): ?>
       <div class="" data-role="clara-panelControl" id="clara-panelControl" />
       <script type="text/x-magento-init">
         {
@@ -20,9 +19,6 @@ $product = $block->getProduct();
           }
         }
       </script>
-    <?php else: ?>
-        <p class="empty"><?php /* @escapeNotVerified */ echo __('No options of this product are available.') ?></p>
-    <?php endif; ?>
 <?php endif;?>
 
 
