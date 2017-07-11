@@ -42,7 +42,7 @@ define([
         selectionCounter=1;
         for(var sel in optionObj[key].selections) {
           this.element.append('<div class="field choice">');
-          this.element.append('<input type="radio" class="radio product bundle" name="bundle_option[' + optionCounter + ']" value="' + selectionCounter + '"/>');
+          this.element.append('<input type="radio" class="radio product bundle" name="bundle_option[' + key + ']" value="' + sel + '"/>');
           this.element.append('<label>' + optionObj[key].selections[sel].name + '</label>');
           this.element.append('</div>');
           selectionCounter++;
