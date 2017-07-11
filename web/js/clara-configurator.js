@@ -40,12 +40,12 @@ define([
         // add selections
         for(var sel in optionObj[key].selections) {
           this.element.append('<div class="field choice">');
-          this.element.append('<input type="radio" class="radio product bundle" name="bundle_option[' + sel + '] value="' + sel + '"/>');
+          this.element.append('<input type="radio" class="radio product bundle" name="bundle_option[' + sel + ']" value="' + sel + '"/>');
           this.element.append('<label>' + optionObj[key].selections[sel].name + '</label>');
           this.element.append('</div>');
         }
         // add option quantity
-        this.element.append('<input type="number" name="bundle_option_qty["' + key + '] value="1"/>');
+        this.element.append('<input type="number" name="bundle_option_qty["' + key + ']" value="1"/>');
         // end div
         this.element.append('</div>');
       }
