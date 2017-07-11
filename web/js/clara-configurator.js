@@ -10,7 +10,7 @@ define([
   'mage/smart-keyboard-handler',
   'mage/translate',
   'priceUtils',
-  'claraplayer'
+  'claraplayer',
   'jquery/ui',
   'jquery/jquery.parsequery',
   'mage/validation/validation'
