@@ -28,6 +28,7 @@ define([
 
     _create: function createClaraConfigurator() {
       console.log(this.options.optionConfig);
+      console.log(this.element);
     }
 
   });

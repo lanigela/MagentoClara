@@ -16,7 +16,7 @@
         <block class="Magento\Framework\View\Element\Template" name="product.info.media.claraPlayer" template="Exocortex_ClaraPlayer::ClaraPlayer.phtml"/>
       </referenceContainer>
 
-      <container name="product.info.clara" htmlTag="div" htmlClass="product-info-main" before="product.info.media">
+      <container name="product.info.clara" htmlTag="div" htmlClass="product-info-main" before="product.info.details">
         <block class="Magento\Catalog\Block\Product\View" name="product.info" template="Magento_Catalog::product/view/form.phtml" after="alert.urls">
           <container name="product.info.form.content" as="product_info_form_content">
             <block class="Magento\Catalog\Block\Product\View" name="product.info.addtocart" as="addtocart" template="Magento_Catalog::product/view/addtocart.phtml"/>
