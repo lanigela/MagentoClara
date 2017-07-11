@@ -14,12 +14,12 @@
   </container-->
   <container name="bundle.options.container" remove="true"/>
   <referenceContainer name="content">
-    <referenceContainer name="product.info.main">
-      <block class="Magento\Bundle\Block\Catalog\Product\View\Type\Bundle" name="product.info.clara.configurator" as="clara_configurator" template="Magento_Bundle::catalog/product/view/type/bundle/ClaraConfigurator.phtml"/>
-    </referenceContainer>
+    <referenceBlock name="product.info.form.options">
+      <block class="Magento\Bundle\Block\Catalog\Product\View\Type\Bundle" name="product.info.clara.configurator" as="clara_configurator" before="-" template="Magento_Bundle::catalog/product/view/type/bundle/ClaraConfigurator.phtml"/>
+    </referenceBlock>
     <referenceContainer name="product.info.media" htmlTag="div" htmlClass="product media" after="product.info.main">
         <remove name="product.info.media.image"/>
-        <block class="Magento\Framework\View\Element\Template" name="product.info.media.image" template="Exocortex_ClaraPlayer::ClaraPlayer.phtml"/>
+        <block class="Magento\Framework\View\Element\Template" name="product.info.media.claraPlayer" template="Exocortex_ClaraPlayer::ClaraPlayer.phtml"/>
     </referenceContainer>
   </referenceContainer>
 </page>
