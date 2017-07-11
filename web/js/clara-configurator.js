@@ -27,8 +27,22 @@ define([
     },
 
     _create: function createClaraConfigurator() {
-      console.log(this.options.optionConfig);
+      console.log("Making custom configurator...");
       this.element.append('<input type="number" value="1">');
+
+      var optionObj = this.options.optionConfig.options;
+      for(var key in optionObj) {
+        // add title
+        this.element.append('<label>' + optionObj[key].title + '</label>');
+        // add selections
+        for(var sel in optionObj[key].selections) {
+          this.element.append('<input type="ratio" name="bundle_option[' + sel + '] value="' + sel + '"/>');
+          this.element.append('<label>' + optionObj[key].selections[sel].name + '</label>');
+        }
+        // add option quantity
+        this.element.append('<input type="number" name="bundle_option_qty["' + key + '] value="1"/>');
+        counter++;
+      }
       console.log("done");
     }
 
