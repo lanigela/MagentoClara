@@ -9,18 +9,13 @@
   <body>
     <attribute name="class" value="page-product-bundle"/>
 
-    <referenceBlock name="product.info.options.wrapper">
-
-    </referenceBlock>
-
-
     <referenceContainer name="product.info.main" remove="true"/>
     <referenceContainer name="product.info.media">
         <referenceBlock name="product.info.media.image" remove="true"/>
         <block class="Magento\Framework\View\Element\Template" name="product.info.media.claraPlayer" template="Exocortex_ClaraPlayer::ClaraPlayer.phtml"/>
     </referenceContainer>
     <referenceContainer name="content">
-      <container name="product.info.main" htmlTag="div" htmlClass="product-info-main" before="-">
+      <container name="product.info.clara" htmlTag="div" htmlClass="product-info-main" before="-">
         <block class="Magento\Catalog\Block\Product\View" name="product.info" template="Magento_Catalog::product/view/form.phtml" after="alert.urls">
           <container name="product.info.form.content" as="product_info_form_content">
             <block class="Magento\Catalog\Block\Product\View" name="product.info.addtocart" as="addtocart" template="Magento_Catalog::product/view/addtocart.phtml"/>
