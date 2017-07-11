@@ -7,13 +7,10 @@
 -->
 <page xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xsi:noNamespaceSchemaLocation="urn:magento:framework:View/Layout/etc/page_configuration.xsd">
 
-  <referenceBlock name="product.info.options.wrapper">
-    <block class="Magento\Bundle\Block\Catalog\Product\View\Type\Bundle" name="product.info.clara.configurator" as="clara_configurator" after="-" template="Magento_Bundle::catalog/product/view/type/bundle/ClaraConfigurator.phtml"/>
-  </referenceBlock>
-  <referenceBlock name="content">
-    <container name="bundle.product.claraConfigurator.wrapper" htmlTag="div" htmlClass="bundle-options-wrapper"/>
-  </referenceBlock>
-  <move element="product.info.options.wrapper" destination="bundle.product.claraConfigurator.wrapper" before="-" />
+  <container name="bundle.product.claraConfigurator.wrapper">
+    <block class="Magento\Bundle\Block\Catalog\Product\View\Type\Bundle" name="product.info.clara.configurator" as="clara_configurator" template="Magento_Bundle::catalog/product/view/type/bundle/ClaraConfigurator.phtml"/>
+  </container>
+  <move element="bundle.product.claraConfigurator.wrapper" destination="product.info.form.options" before="-" />
   <!--container name="product.info.form.content" as="product_info_form_content">
     <block class="Magento\Bundle\Block\Catalog\Product\View\Type\Bundle" name="product.info.clara.configurator" as="clara_configurator" before="addtocart" template="Magento_Bundle::catalog/product/view/type/bundle/ClaraConfigurator.phtml"/>
   </container-->
