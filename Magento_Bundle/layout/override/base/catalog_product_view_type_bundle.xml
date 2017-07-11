@@ -6,5 +6,6 @@
  */
 -->
 <page xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xsi:noNamespaceSchemaLocation="urn:magento:framework:View/Layout/etc/page_configuration.xsd">
-  <container name="product.info.main" remove="true"/>
+  <container name="product.info.media" remove="true"/>
+  <container name="bundle.options.container" remove="true"/>
 </page>

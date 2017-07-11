@@ -1,0 +1,30 @@
+<?php
+/**
+ * Copyright © Exocortex, Inc. All rights reserved.
+ * See COPYING.txt for license details.
+ */
+?>
+<?php /** @var $block Magento\Bundle\Block\Catalog\Product\View\Type\Bundle */ ?>
+<?php
+$product = $block->getProduct();
+$helper = $this->helper('Magento\Catalog\Helper\Output');
+?>
+<?php $options = $block->decorateArray($block->getOptions()); ?>
+<?php if ($product->isSaleable()):?>
+    <?php if (count($options)): ?>
+      <div class="" data-role="clara-panelControl" id="clara-panelControl" />
+      <script type="text/x-magento-init">
+        {
+          "[data-role=clara-panelControl]": {
+            "js/clara-configurator": {
+              "optionConfig": <?php /* @escapeNotVerified */ echo $block->getJsonConfig()?>,
+            }
+          }
+        }
+      </script>
+    <?php else: ?>
+        <p class="empty"><?php /* @escapeNotVerified */ echo __('No options of this product are available.') ?></p>
+    <?php endif; ?>
+<?php endif;?>
+
+

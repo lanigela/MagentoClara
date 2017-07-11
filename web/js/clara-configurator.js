@@ -15,13 +15,21 @@ define([
   'jquery/jquery.parsequery',
   'mage/validation/validation'
 ], function($, _, mageTemplate,  keyboardHandler, $t, priceUtils, claraPlayer) {
-  $.widget('clara.ConfiguratorRender', {
-    options: {
+  'use strict';
 
-    },
+  var globalOptions = {
+    optionConfig: null
+  };
+
+  $.widget('clara.Configurator', {
+    options: globalOptions,
 
     _init: function () {
 
+    },
+
+    _create: function () {
+      console.log(this.options.optionConfig);
     },
 
     _OnClick: function ($this, $widget) {
@@ -30,5 +38,5 @@ define([
 
   });
 
-  return $.clara.ConfiguratorRender;
+  return $.clara.Configurator;
 });
