@@ -7,10 +7,8 @@
 <?php /** @var $block Magento\Bundle\Block\Catalog\Product\View\Type\Bundle */ ?>
 <?php
 $product = $block->getProduct();
-$helper = $this->helper('Magento\Catalog\Helper\Output');
 ?>
-<?php $options = $block->decorateArray($block->getOptions()); ?>
-<?php if ($product->isSaleable()):?>
+<?php if ($product->isSaleable() && $block->hasOptions()):?>
     <?php if (count($options)): ?>
       <div class="" data-role="clara-panelControl" id="clara-panelControl" />
       <script type="text/x-magento-init">
