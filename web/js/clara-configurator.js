@@ -38,7 +38,7 @@ define([
         // add selections
         for(var sel in optionObj[key].selections) {
           this.element.append('<div class="field choice">');
-          this.element.append('<input type="ratio" name="bundle_option[' + sel + '] value="' + sel + '"/>');
+          this.element.append('<input type="radio" class="radio product bundle" name="bundle_option[' + sel + '] value="' + sel + '"/>');
           this.element.append('<label>' + optionObj[key].selections[sel].name + '</label>');
           this.element.append('</div>');
         }
