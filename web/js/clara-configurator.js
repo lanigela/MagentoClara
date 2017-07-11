@@ -28,7 +28,8 @@ define([
 
     _create: function createClaraConfigurator() {
       console.log(this.options.optionConfig);
-      console.log(this.element);
+      this.element.append('<input type="number" value="1">');
+      console.log("done");
     }
 
   });
