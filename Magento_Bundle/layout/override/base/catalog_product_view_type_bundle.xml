@@ -12,7 +12,7 @@
   <container name="product.info.form.content" as="product_info_form_content">
     <block class="Magento\Bundle\Block\Catalog\Product\View\Type\Bundle" name="product.info.clara.configurator" as="clara_configurator" before="addtocart" template="Magento_Bundle::catalog/product/view/type/bundle/ClaraConfigurator.phtml"/>
   </container-->
-  <container name="bundle.options.container" remove="true"/>
+
 
 
     <referenceBlock name="product.info.options.wrapper">
