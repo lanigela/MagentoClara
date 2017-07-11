@@ -28,8 +28,10 @@ define([
 
     _create: function createClaraConfigurator() {
       console.log("Making custom configurator...");
+      console.log(this.options.optionConfig);
 
       var optionObj = this.options.optionConfig.options;
+
       for(var key in optionObj) {
         // add div
         this.element.append('<div class="nested options-list">');
