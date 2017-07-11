@@ -17,12 +17,10 @@ define([
 ], function($, _, mageTemplate,  keyboardHandler, $t, priceUtils, claraPlayer) {
   'use strict';
 
-  var globalOptions = {
-    optionConfig: null
-  };
-
   $.widget('clara.Configurator', {
-    options: globalOptions,
+    options: {
+      optionConfig: null
+    },
 
     _init: function () {
 
