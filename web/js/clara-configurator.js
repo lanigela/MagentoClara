@@ -28,6 +28,7 @@ define([
     },
 
     _create: function createClaraConfigurator() {
+      var self = this;
       // init clara player
       console.log("ClaraUUID=" + this.options.claraUUID);
       var clara = claraPlayer('clara-player');
@@ -37,7 +38,7 @@ define([
         ['orbit', 'pan', 'zoom'].forEach(function (tool) {
           clara.player.hideTool(tool);
         });
-        clara.configuration.initConfigurator({ form: 'Default', el: this.element });
+        clara.configuration.initConfigurator({ form: 'Default', el: self.element });
       });
       clara.on('configurationChange', function (ev1) {
         // api.player.frameScene();
