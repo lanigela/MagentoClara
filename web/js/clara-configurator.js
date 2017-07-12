@@ -28,7 +28,6 @@ define([
     },
 
     _create: function createClaraConfigurator() {
-      var self = this;
       // init clara player
       console.log("ClaraUUID=" + this.options.claraUUID);
       var clara = claraPlayer('clara-player');
@@ -38,7 +37,7 @@ define([
         ['orbit', 'pan', 'zoom'].forEach(function (tool) {
           clara.player.hideTool(tool);
         });
-        clara.configuration.initConfigurator({ form: 'Default', el: self.element });
+        clara.configuration.initConfigurator({ form: 'Default', el: document.getElementById('clara-panelControl') });
       });
 
       var defaultDimensions = {
@@ -100,7 +99,7 @@ define([
 
 
         if (ev1[0].name === 'Pillow Type' && config['Pillow Type'] !== 'Bottom') {
-          selfConfigChaqnge = true;
+          selfConfigChange = true;
           clara.scene.setAll({ name: 'Shear_Offset_Left', plug: 'Transform', property: 'translation' }, new THREE.Vector3(0, 0, 0));
           clara.scene.setAll({ name: 'Shear_Offset_Right', plug: 'Transform', property: 'translation' }, new THREE.Vector3(0, 0, 0));
         }
