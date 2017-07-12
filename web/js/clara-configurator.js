@@ -40,6 +40,15 @@ define([
         });
         clara.configuration.initConfigurator({ form: 'Default', el: self.element });
       });
+
+      var defaultDimensions = {
+        Length: 50,
+        Width: 50,
+        Depth: 8,
+      };
+      var dimensions = ['Length', 'Width', 'Depth'];
+      var selfConfigChange = false;
+
       clara.on('configurationChange', function (ev1) {
         // api.player.frameScene();
 
