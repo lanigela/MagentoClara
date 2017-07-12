@@ -48,6 +48,7 @@ define([
       };
       var dimensions = ['Length', 'Width', 'Depth'];
       var selfConfigChange = false;
+      var THREE = clara.deps.THREE;
 
       clara.on('configurationChange', function (ev1) {
         // api.player.frameScene();
