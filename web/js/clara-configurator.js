@@ -28,7 +28,16 @@ define([
     },
 
     _create: function createClaraConfigurator() {
+      // init clara player
       console.log("ClaraUUID=" + this.options.claraUUID);
+      var clara = claraPlayer('clara-player');
+      clara.on('loaded', function() {
+        console.log('Clara player is loaded and ready');
+      });
+
+      // Fetch and initialize the sceneId
+      clara.sceneIO.fetchAndUse(this.options.claraUUID);
+
       console.log("Making custom configurator...");
       console.log(this.options.optionConfig);
 
