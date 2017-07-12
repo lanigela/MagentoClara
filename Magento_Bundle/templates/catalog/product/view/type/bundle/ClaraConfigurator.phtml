@@ -14,7 +14,8 @@ $product = $block->getProduct();
         {
           "[data-role=clara-panelControl]": {
             "js/clara-configurator": {
-              "optionConfig": <?php /* @escapeNotVerified */ echo $block->getJsonConfig()?>
+              "optionConfig": <?php /* @escapeNotVerified */ echo $block->getJsonConfig()?>,
+              "claraUUID": <?php echo $product->getAttributeText('claraUUID')?>
             }
           }
         }

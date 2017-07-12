@@ -19,7 +19,8 @@ define([
 
   $.widget('clara.Configurator', {
     options: {
-      optionConfig: null
+      optionConfig: null,
+      claraUUID: ''
     },
 
     _init: function initClaraConfigurator() {
@@ -27,6 +28,7 @@ define([
     },
 
     _create: function createClaraConfigurator() {
+      console.log("ClaraUUID=" + this.options.claraUUID);
       console.log("Making custom configurator...");
       console.log(this.options.optionConfig);
 
