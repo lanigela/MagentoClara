@@ -31,6 +31,43 @@ define([
       // init clara player
       console.log("ClaraUUID=" + this.options.claraUUID);
       var clara = claraPlayer('clara-player');
+      _initClaraPlayer(clara, this.options.claraUUID);
+
+
+      /*console.log("Making custom configurator...");
+      console.log(this.options.optionConfig);
+
+      var optionObj = this.options.optionConfig.options;
+      var optionCounter=1;
+      var selectionCounter=1;
+      for(var key in optionObj) {
+        // add div
+        this.element.append('<div class="nested options-list">');
+        // add title
+        this.element.append('<label>' + optionObj[key].title + '</label>');
+        // add selections
+        selectionCounter=1;
+        for(var sel in optionObj[key].selections) {
+          this.element.append('<div class="field choice">');
+          this.element.append('<input type="radio" class="radio product bundle" name="bundle_option[' + key + ']" value="' + sel + '"/>');
+          this.element.append('<label>' + optionObj[key].selections[sel].name + '</label>');
+          this.element.append('</div>');
+          selectionCounter++;
+        }
+        // add option quantity
+        this.element.append('<input type="number" name="bundle_option_qty[' + optionCounter + ']" value="1"/>');
+        // end div
+        this.element.append('</div>');
+        optionCounter++;
+      }
+      console.log("done");*/
+    },
+
+
+    _initClaraPlayer(clara, uuid) {
+      /*
+      * Copied from David's cillowsDemo.js
+      */
       clara.on('loaded', function() {
         console.log('Clara player is loaded and ready');
 
@@ -110,35 +147,8 @@ define([
       });
 
       // Fetch and initialize the sceneId
-      clara.sceneIO.fetchAndUse(this.options.claraUUID, null, { waitForPublish: true });
+      clara.sceneIO.fetchAndUse(uuid, null, { waitForPublish: true });
 
-      /*console.log("Making custom configurator...");
-      console.log(this.options.optionConfig);
-
-      var optionObj = this.options.optionConfig.options;
-      var optionCounter=1;
-      var selectionCounter=1;
-      for(var key in optionObj) {
-        // add div
-        this.element.append('<div class="nested options-list">');
-        // add title
-        this.element.append('<label>' + optionObj[key].title + '</label>');
-        // add selections
-        selectionCounter=1;
-        for(var sel in optionObj[key].selections) {
-          this.element.append('<div class="field choice">');
-          this.element.append('<input type="radio" class="radio product bundle" name="bundle_option[' + key + ']" value="' + sel + '"/>');
-          this.element.append('<label>' + optionObj[key].selections[sel].name + '</label>');
-          this.element.append('</div>');
-          selectionCounter++;
-        }
-        // add option quantity
-        this.element.append('<input type="number" name="bundle_option_qty[' + optionCounter + ']" value="1"/>');
-        // end div
-        this.element.append('</div>');
-        optionCounter++;
-      }
-      console.log("done");*/
     }
 
   });
