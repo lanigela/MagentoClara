@@ -31,7 +31,8 @@ define([
       // init clara player
       console.log("ClaraUUID=" + this.options.claraUUID);
       var clara = claraPlayer('clara-player');
-      this._initClaraPlayer(clara, this.options.claraUUID);
+      var configuratorPanelId = "clara-panelControl";
+      this._initClaraPlayer(clara, this.options.claraUUID, configuratorPanelId);
 
 
       console.log("Making custom configurator...");
@@ -64,7 +65,7 @@ define([
     },
 
 
-    _initClaraPlayer(clara, uuid) {
+    _initClaraPlayer(clara, uuid, panelid) {
       /*
       * Copied from David's cillowsDemo.js
       */
@@ -78,7 +79,7 @@ define([
         ['orbit', 'pan', 'zoom'].forEach(function (tool) {
           api.player.hideTool(tool);
         });
-        api.configuration.initConfigurator({ form: 'Default', el: document.getElementById('configure-embed') });
+        api.configuration.initConfigurator({ form: 'Default', el: document.getElementById(panelid) });
       });
 
 
