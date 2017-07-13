@@ -31,7 +31,7 @@ define([
       // init clara player
       console.log("ClaraUUID=" + this.options.claraUUID);
       var clara = claraPlayer('clara-player');
-      _initClaraPlayer(clara, this.options.claraUUID);
+      this._initClaraPlayer(clara, this.options.claraUUID);
 
 
       console.log("Making custom configurator...");
