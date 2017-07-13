@@ -34,10 +34,10 @@ define([
       _initClaraPlayer(clara, this.options.claraUUID);
 
 
-      /*console.log("Making custom configurator...");
+      console.log("Making custom configurator...");
       console.log(this.options.optionConfig);
 
-      var optionObj = this.options.optionConfig.options;
+      /*var optionObj = this.options.optionConfig.options;
       var optionCounter=1;
       var selectionCounter=1;
       for(var key in optionObj) {
@@ -68,86 +68,96 @@ define([
       /*
       * Copied from David's cillowsDemo.js
       */
-      clara.on('loaded', function() {
-        console.log('Clara player is loaded and ready');
+      var sceneId = uuid; // clara.io, live demo
+      var api = clara;
 
+      var THREE = api.deps.THREE;
+
+      api.sceneIO.fetchAndUse(sceneId, null, { waitForPublish: true });
+      api.on('loaded', function () {
         ['orbit', 'pan', 'zoom'].forEach(function (tool) {
-          clara.player.hideTool(tool);
+          api.player.hideTool(tool);
         });
-        clara.configuration.initConfigurator({ form: 'Default', el: document.getElementById('clara-panelControl') });
+        api.configuration.initConfigurator({ form: 'Default', el: document.getElementById('configure-embed') });
       });
+
 
       var defaultDimensions = {
         Length: 50,
         Width: 50,
         Depth: 8,
       };
-      var dimensions = ['Length', 'Width', 'Depth'];
-      var selfConfigChange = false;
-      var THREE = clara.deps.THREE;
 
-      clara.on('configurationChange', function (ev1) {
+      var dimensions = ['Length', 'Width', 'Depth'];
+
+      var selfConfigChange = false;
+
+      api.on('configurationChange', function (ev1) {
         // api.player.frameScene();
 
-        // avoid infinite recursion
-        if (selfConfigChange && (ev1[0].name === 'Shape')) {
-          selfConfigChange = false;
-          return;
-        }
+        var changedName = ev1[0].name;
 
-        var config = clara.configuration.getConfiguration();
+        var config = api.configuration.getConfiguration();
 
         // back pillows allow depth up to 45cm
-        if (ev1[0].name === 'Pillow Type') {
+        if (changedName === 'Pillow Type') {
           var maxDepth = 25;
           if (config['Pillow Type'] === 'Back' || config['Pillow Type'] === 'Back (Angled)') {
             maxDepth = 45;
           }
-          clara.configuration.setAttribute('Depth (cm)', { maxValue: maxDepth });
+          api.configuration.setAttribute('Depth (cm)', { maxValue: maxDepth });
         }
 
-        var widthHalf = (Number(config['Width (cm)']) - defaultDimensions.Width) / 100 / 2;
-        var lengthHalf = (Number(config['Length (cm)']) - defaultDimensions.Length) / 100 / 2;
-        var depthHalf = (Number(config['Depth (cm)']) - defaultDimensions.Depth) / 100 / 2;
+        // Resizing is handled manually here for convenience/flexibility over configurator actions
+        if (changedName === 'Width (cm)' || changedName === 'Length (cm)' || changedName === 'Depth (cm)') {
+          var widthHalf = (Number(config['Width (cm)']) - defaultDimensions.Width) / 100 / 2;
+          var lengthHalf = (Number(config['Length (cm)']) - defaultDimensions.Length) / 100 / 2;
+          var depthHalf = (Number(config['Depth (cm)']) - defaultDimensions.Depth) / 100 / 2;
 
-        // ***
-        ['bottom*', 'back*', 'mesh_elastic'].forEach(function (nodeName) { // add pocket
-          clara.scene.setAll({ name: nodeName, plug: 'PolyMesh', properties: { name: 'StretchX' }, property: 'stretchDistance' },
-            widthHalf);
-        });
+          // Stretch pillows and attachments along the appropriate dimensions
+          ['bottom*', 'back*', 'mesh_elastic', 'mesh_Velcro_strip', 'pocket*'].forEach(function (nodeName) {
+            api.scene.setAll({ name: nodeName, plug: 'PolyMesh', properties: { name: 'StretchX' }, property: 'stretchDistance' },
+              widthHalf);
+          });
 
-        ['bottom*', 'back*'].forEach(function (nodeName) { // add pocket
-          clara.scene.setAll({ name: nodeName, plug: 'PolyMesh', properties: { name: 'StretchY' }, property: 'stretchDistance' },
-            lengthHalf);
-        });
+          ['bottom*', 'back*', 'pocket*'].forEach(function (nodeName) {
+            api.scene.setAll({ name: nodeName, plug: 'PolyMesh', properties: { name: 'StretchY' }, property: 'stretchDistance' },
+              lengthHalf);
+          });
 
-        ['bottom*', 'back*'].forEach(function (nodeName) {
-          clara.scene.setAll({ name: nodeName, plug: 'PolyMesh', properties: { name: 'StretchZ' }, property: 'stretchDistance' },
-            depthHalf);
-        });
+          ['bottom*', 'back*'].forEach(function (nodeName) {
+            api.scene.setAll({ name: nodeName, plug: 'PolyMesh', properties: { name: 'StretchZ' }, property: 'stretchDistance' },
+              depthHalf);
+          });
 
-        // api.scene.setAll({ name: 'Loops', plug: 'Transform', property: 'translation' }, new THREE.Vector3(widthHalf, 0, -lengthHalf));
-        // api.scene.setAll({ name: 'Loops2', plug: 'Transform', property: 'translation' }, new THREE.Vector3(-widthHalf, 0.0884, -lengthHalf));
+          // Offset attachments to match pillow resizing
+          api.scene.setAll({ name: 'Stretch_Offset_Z', plug: 'Transform', property: 'translation' }, new THREE.Vector3(0, 0, -depthHalf));
+          api.scene.setAll({ name: 'Stretch_Offset_XZ', plug: 'Transform', property: 'translation' }, new THREE.Vector3(widthHalf, 0, -depthHalf));
+          api.scene.setAll({ name: 'Stretch_Offset_-XZ', plug: 'Transform', property: 'translation' }, new THREE.Vector3(-widthHalf, 0, -depthHalf));
 
-        clara.scene.setAll({ name: 'Stretch_Offset_Z', plug: 'Transform', property: 'translation' }, new THREE.Vector3(0, 0, -depthHalf));
-        clara.scene.setAll({ name: 'Stretch_Offset_XZ', plug: 'Transform', property: 'translation' }, new THREE.Vector3(widthHalf, 0, -depthHalf));
-        clara.scene.setAll({ name: 'Stretch_Offset_-XZ', plug: 'Transform', property: 'translation' }, new THREE.Vector3(-widthHalf, 0, -depthHalf));
-        // api.scene.setAll({ name: 'Stretch_Offset2', plug: 'Transform', property: 'translation' }, new THREE.Vector3(0, 0, -depthHalf));
-
-
-        if (ev1[0].name === 'Pillow Type' && config['Pillow Type'] !== 'Bottom') {
-          selfConfigChange = true;
-          clara.scene.setAll({ name: 'Shear_Offset_Left', plug: 'Transform', property: 'translation' }, new THREE.Vector3(0, 0, 0));
-          clara.scene.setAll({ name: 'Shear_Offset_Right', plug: 'Transform', property: 'translation' }, new THREE.Vector3(0, 0, 0));
+          // Shift back attachments proportionally along Y to maintain relative height on cushion - problem
+          // is then the stretching to account for the shape attribute (angled cushion sides) has to be dynamically
+          // recalculated based on attachment height
+          // api.scene.setAll({ name: 'Stretch_Offset_Y', plug: 'Transform', property: 'translation' }, new THREE.Vector3(0, lengthHalf/2, 0));
         }
-        else {
-          selfConfigChange = true; // avoid infinite recursion
-          clara.configuration.executeAttribute('Shape', config['Shape']);
+
+        // Shear_Offsets only apply for ties on the bottom box cushion, not the bottom puffy cushion since
+        // it does not have angled variants. The configurator sets the shear offsets to 0 when selecting the
+        // bottom puffy cushion, but when switching back to 'Bottom', we need to make sure the offsets are
+        // re-applied for the current pillow shape. We manually force this below.
+        // Likewise, displacement and stretching of the elastic attachment is performed separately for Back
+        // vs Back (Angled) cushions, so need to re-execute the appropriate Shape actions when switching to these
+        // cushion types
+        if (changedName === 'Pillow Type') {
+          if (config['Pillow Type'] === 'Bottom' || config['Pillow Type'] === 'Back') {
+            api.configuration.executeAttribute('Shape', config['Shape']);
+          }
+          else if (config['Pillow Type'] === 'Back (Angled)') {
+            api.configuration.executeAttribute('Shape (Angled Back)', config['Shape (Angled Back)']);
+          }
         }
       });
 
-      // Fetch and initialize the sceneId
-      clara.sceneIO.fetchAndUse(uuid, null, { waitForPublish: true });
 
     }
 
