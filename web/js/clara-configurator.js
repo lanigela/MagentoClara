@@ -34,36 +34,7 @@ define([
       var configuratorPanelId = "clara-panelControl";
       this._initClaraPlayer(clara, this.options.claraUUID, configuratorPanelId);
 
-
-      console.log("Making custom configurator...");
       console.log(this.options.optionConfig);
-
-
-
-      /*var optionObj = this.options.optionConfig.options;
-      var optionCounter=1;
-      var selectionCounter=1;
-      for(var key in optionObj) {
-        // add div
-        this.element.append('<div class="nested options-list">');
-        // add title
-        this.element.append('<label>' + optionObj[key].title + '</label>');
-        // add selections
-        selectionCounter=1;
-        for(var sel in optionObj[key].selections) {
-          this.element.append('<div class="field choice">');
-          this.element.append('<input type="radio" class="radio product bundle" name="bundle_option[' + key + ']" value="' + sel + '"/>');
-          this.element.append('<label>' + optionObj[key].selections[sel].name + '</label>');
-          this.element.append('</div>');
-          selectionCounter++;
-        }
-        // add option quantity
-        this.element.append('<input type="number" name="bundle_option_qty[' + optionCounter + ']" value="1"/>');
-        // end div
-        this.element.append('</div>');
-        optionCounter++;
-      }
-      console.log("done");*/
     },
 
 
@@ -85,6 +56,7 @@ define([
         api.configuration.initConfigurator({ form: 'Default', el: document.getElementById(panelid) });
 
         self._mappingConfiguration(clara);
+        self._createFormFields(self.options.optionConfig);
       });
 
 
@@ -181,14 +153,47 @@ define([
 
 
     // add invisible input to product_addtocart_form
-    _createFormFields() {
+    _createFormFields(options) {
       // locate the form div
+      var wrapper = document.getElementById('clara-form-configurations-wrapper');
+      if (!wrapper) {
+        console.error("Can not find clara configuration wrapper");
+        return;
+      }
       // check if the fields are already created
+      if (wrapper.hasChildNodes()) {
+        console.warn("Form fields already exist");
+        return;
+      }
+
       // insert input fields
+      console.log("Making custom configurator...");
+      var formFields = document.createElement('div');
+      var optionCounter=1;
+      var selectionCounter=1;
+      for(var key in options) {
+        // add div
+        var optionEI = document.createElement('input');
+        var optionQtyEI = document.createElement('input');
+
+        // set option name and leave default value empty
+        optionEI.setAttribute('name', 'bundle_option[' + key + ']');
+        optionEI.setAttribute('value', '');
+        optionEI.setAttribute('type','hidden')
+        // set option quantity
+        optionQtyEI.setAttribute('name', 'bundle_option_qty[' + key + ']');
+        optionQtyEI.setAttribute('value', '');
+        optionQtyEI.setAttribute('type', 'hidden');
+        // append to form
+        formFields.appendChild(optionEI);
+        formFields.appendChild(optionQtyEI)
+      }
+      wrapper.appendChild(formFields);
+      console.log("done");
     },
 
     // update form fields when configuration change
-    _onConfigurationChange() {
+    _updateFormFields() {
 
     }
 

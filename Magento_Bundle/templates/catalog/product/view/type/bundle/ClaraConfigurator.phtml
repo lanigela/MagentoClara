@@ -9,7 +9,9 @@
 $product = $block->getProduct();
 ?>
 <?php if ($product->isSaleable() && $block->hasOptions()):?>
-      <div data-role="clara-panelControl" id="clara-panelControl" />
+      <div data-role="clara-panelControl" id="clara-panelControl">
+        <div id="clara-form-configurations-wrapper"/>
+      </div>
       <script type="text/x-magento-init">
         {
           "[data-role=clara-panelControl]": {
