@@ -1,0 +1,26 @@
+<?php
+/**
+ * Copyright © Exocortex, Inc. All rights reserved.
+ * See COPYING.txt for license details.
+ */
+?>
+<?php /** @var $block Magento\Bundle\Block\Catalog\Product\View\Type\Bundle */ ?>
+<?php
+$product = $block->getProduct();
+?>
+<?php if ($product->isSaleable() && $block->hasOptions()):?>
+      <div data-role="clara-panelControl" id="clara-panelControl"></div>>
+      <script type="text/x-magento-init">
+        {
+          "[data-role=clara-panelControl]": {
+            "js/clara-configurator": {
+              "optionConfig": <?php /* @escapeNotVerified */ echo $block->getJsonConfig()?>,
+              "claraUUID": <?php echo json_encode($product->getResource()->getAttribute('clarauuid')->getFrontend()->getValue($product))?>
+            }
+          }
+        }
+      </script>
+      <div id="clara-form-configurations-wrapper"></div>
+<?php endif;?>
+
+

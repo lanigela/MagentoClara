@@ -1,6 +1,6 @@
 var config = {
     paths: {
-        "claraplayer":  "js/claraplayer.min"
+        "claraplayer":  "https://clara.io/js/claraplayer.min"
     },
     shim: {
         "claraplayer": {
