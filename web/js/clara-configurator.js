@@ -139,11 +139,25 @@ define([
 
     },
 
-    // map clara configuration with magento
+    // map clara configuration with magento (reverse map of this.options.optionConfig.options)
+    /* this.options.optionConfig.options structure
+    * options[key]:
+    *               - title
+    *               - selections[key]
+    *                                  - name
+    *  task: reverse the above key-value
+    * config[title]:
+    *               - key
+    *               - selections[name]
+    *                                  - key
+    * Note: title and name in config and options are similar strings but they could be different
+    */
     _mappingConfiguration(clara) {
       console.log(clara.configuration.getAttributes());
       console.log(clara.configuration.getConfiguration());
 
+      var map = {};
+      return map;
     },
 
     // check if clara configuration match with magento
@@ -193,8 +207,10 @@ define([
     },
 
     // update form fields when configuration change
-    _updateFormFields() {
-
+    _updateFormFields(map) {
+      // update dropdowns
+      // update size
+      // update volume price
     }
 
   });
