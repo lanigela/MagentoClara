@@ -160,6 +160,30 @@ define([
       });
 
 
+    },
+
+    // map clara configuration with magento
+    _mappingConfiguration(clara) {
+      console.log(clara.configuration.getAttributes())
+
+    },
+
+    // check if clara configuration match with magento
+    _validateConfiguration(claraCon, magentoCon) {
+
+    },
+
+
+    // add invisible input to product_addtocart_form
+    _createFormFields() {
+      // locate the form div
+      // check if the fields are already created
+      // insert input fields
+    },
+
+    // update form fields when configuration change
+    _onConfigurationChange() {
+
     }
 
   });
