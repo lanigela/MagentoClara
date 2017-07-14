@@ -71,6 +71,7 @@ define([
       /*
       * Copied from David's cillowsDemo.js
       */
+      var self = this;
       var sceneId = uuid; // clara.io, live demo
       var api = clara;
 
@@ -83,7 +84,7 @@ define([
         });
         api.configuration.initConfigurator({ form: 'Default', el: document.getElementById(panelid) });
 
-        this._mappingConfiguration(clara);
+        self._mappingConfiguration(clara);
       });
 
 
