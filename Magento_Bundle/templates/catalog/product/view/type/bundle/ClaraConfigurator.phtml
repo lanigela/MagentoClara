@@ -10,7 +10,6 @@ $product = $block->getProduct();
 ?>
 <?php if ($product->isSaleable() && $block->hasOptions()):?>
       <div data-role="clara-panelControl" id="clara-panelControl"/>
-      <div id="clara-form-configurations-wrapper"/>
       <script type="text/x-magento-init">
         {
           "[data-role=clara-panelControl]": {
@@ -21,6 +20,7 @@ $product = $block->getProduct();
           }
         }
       </script>
+      <div id="clara-form-configurations-wrapper"/>
 <?php endif;?>
 
 
