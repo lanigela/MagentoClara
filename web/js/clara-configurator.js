@@ -38,7 +38,7 @@ define([
       console.log("Making custom configurator...");
       console.log(this.options.optionConfig);
 
-      this._mappingConfiguration(clara);
+
 
       /*var optionObj = this.options.optionConfig.options;
       var optionCounter=1;
@@ -82,6 +82,8 @@ define([
           api.player.hideTool(tool);
         });
         api.configuration.initConfigurator({ form: 'Default', el: document.getElementById(panelid) });
+
+        this._mappingConfiguration(clara);
       });
 
 
@@ -166,7 +168,8 @@ define([
 
     // map clara configuration with magento
     _mappingConfiguration(clara) {
-      console.log(clara.configuration.getAttributes())
+      console.log(clara.configuration.getAttributes());
+      console.log(clara.configuration.getConfiguration());
 
     },
 
