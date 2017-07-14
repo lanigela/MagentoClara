@@ -38,6 +38,8 @@ define([
       console.log("Making custom configurator...");
       console.log(this.options.optionConfig);
 
+      this._mappingConfiguration(clara);
+
       /*var optionObj = this.options.optionConfig.options;
       var optionCounter=1;
       var selectionCounter=1;
