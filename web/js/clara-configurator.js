@@ -56,7 +56,7 @@ define([
         api.configuration.initConfigurator({ form: 'Default', el: document.getElementById(panelid) });
 
         self._mappingConfiguration(clara);
-        self._createFormFields(self.options.optionConfig);
+        self._createFormFields(self.options.optionConfig.options);
       });
 
 
