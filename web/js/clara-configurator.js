@@ -85,14 +85,14 @@ define([
           if (config['Pillow Type'] === 'Back' || config['Pillow Type'] === 'Back (Angled)') {
             maxDepth = 45;
           }
-          api.configuration.setAttribute('Depth (cm)', { maxValue: maxDepth });
+          api.configuration.setAttribute('Depth', { maxValue: maxDepth });
         }
 
         // Resizing is handled manually here for convenience/flexibility over configurator actions
-        if (changedName === 'Width (cm)' || changedName === 'Length (cm)' || changedName === 'Depth (cm)') {
-          var widthHalf = (Number(config['Width (cm)']) - defaultDimensions.Width) / 100 / 2;
-          var lengthHalf = (Number(config['Length (cm)']) - defaultDimensions.Length) / 100 / 2;
-          var depthHalf = (Number(config['Depth (cm)']) - defaultDimensions.Depth) / 100 / 2;
+        if (changedName === 'Width (A)' || changedName === 'Length' || changedName === 'Depth') {
+          var widthHalf = (Number(config['Width (A)']) - defaultDimensions.Width) / 100 / 2;
+          var lengthHalf = (Number(config['Length']) - defaultDimensions.Length) / 100 / 2;
+          var depthHalf = (Number(config['Depth']) - defaultDimensions.Depth) / 100 / 2;
 
           // Stretch pillows and attachments along the appropriate dimensions
           ['bottom*', 'back*', 'mesh_elastic', 'mesh_Velcro_strip', 'pocket*'].forEach(function (nodeName) {
