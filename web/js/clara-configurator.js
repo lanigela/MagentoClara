@@ -306,23 +306,28 @@ define([
       console.log("done");
     },
 
+    _isNumber: function isNumber(n) {
+      return !isNaN(parseFloat(n)) && isFinite(n);
+    },
+
     // update form fields when configuration change
     _updateFormFields: function updateFormFields(config, map) {
       for (var attr in config) {
         if (map.has(attr)) {
           var attrId = map.get(attr).get('key');
-          if (map.get(attr).has('values')) {
-            // update dropdowns
-            var attrValue = map.get(attr).get('values').get(config[attr]).get('key');
-            document.getElementById('bundle_option[' + attrId + ']').setAttribute('value', attrValue);
-            document.getElementById('bundle_option_qty[' + attrId + ']').setAttribute('value', '1');
-          }
-          else {
+          if (this._isNumber(config[attr])){
             // update size
             var attrValue = map.get(attr).get('key');
             document.getElementById('bundle_option[' + attrId + ']').setAttribute('value', attrValue);
             document.getElementById('bundle_option_qty[' + attrId + ']').setAttribute('value', config[attr]);
           }
+          else {
+            // update dropdowns
+            var attrValue = map.get(attr).get('values').get(config[attr]).get('key');
+            document.getElementById('bundle_option[' + attrId + ']').setAttribute('value', attrValue);
+            document.getElementById('bundle_option_qty[' + attrId + ']').setAttribute('value', '1');
+          }
+
 
         }
         else {
