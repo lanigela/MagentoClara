@@ -338,7 +338,7 @@ define([
       }
       // update volume price
       var volumeId = map.get('Volume_Price').get('key');
-      var volumeValue = map.get('Volume_Price'.get('values').get(attr).get('key'));
+      var volumeValue = map.get('Volume_Price').get('values').get(attr).get('key');
       document.getElementById('bundle_option[' + volumeId + ']').setAttribute('value', volumeValue);
       document.getElementById('bundle_option_qty[' + volumeId + ']').setAttribute('value', volume);
     }
