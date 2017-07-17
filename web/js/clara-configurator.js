@@ -201,7 +201,7 @@ define([
         }
         // search for title in claraCon
         for (var tKey in target) {
-          var targetValue = targetKey.get('type') === 'object' ? target[tKey][targetkey.get('key')] : target[tKey];
+          var targetValue = targetKey.get('type') === 'object' ? target[tKey][targetKey.get('key')] : target[tKey];
           if (!targetValue) {
             console.error("Can not read  targetKey from target");
             return null;
