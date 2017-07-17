@@ -23,11 +23,11 @@ define([
       claraUUID: ''
     },
 
-    _init: function initClaraConfigurator() {
+    _init: function init() {
 
     },
 
-    _create: function createClaraConfigurator() {
+    _create: function create() {
       // init clara player
       console.log("ClaraUUID=" + this.options.claraUUID);
       var clara = claraPlayer('clara-player');
@@ -38,7 +38,7 @@ define([
     },
 
 
-    _initClaraPlayer(clara, uuid, panelid) {
+    _initClaraPlayer: function initClaraPlayer(clara, uuid, panelid) {
       /*
       * Copied from David's cillowsDemo.js
       */
@@ -55,7 +55,7 @@ define([
         });
         api.configuration.initConfigurator({ form: 'Default', el: document.getElementById(panelid) });
 
-        self._mappingConfiguration(clara);
+        self._mappingConfiguration(clara.configuration.getAttributes(), self.options.optionConfig.options);
         self._createFormFields(self.options.optionConfig.options);
       });
 
@@ -150,13 +150,85 @@ define([
     *               - key
     *               - selections[name]
     *                                  - key
+    * Matching rule: title.includes(name) || name.includes(title)
+    *
     * Note: title and name in config and options are similar strings but they could be different
+    * Name and title are unique
+    * Make sure it's an one-to-one mapping, otherwise report error
     */
-    _mappingConfiguration(clara) {
-      console.log(clara.configuration.getAttributes());
-      console.log(clara.configuration.getConfiguration());
+    _mappingConfiguration: function mappingConfiguration(claraCon, magentoCon) {
+      var claraKey = new Map();
+      var claraSelectionKey = new Map();
+      claraSelectionKey.set('keyInParent', 'values');
+      claraSelectionKey.set('type', 'array');
+      claraKey.set('key', 'name');
+      claraKey.set('type', 'object');
+      claraKey.set('nested', claraSelectionKey);
 
-      var map = {};
+      var magentoKey = new Map();
+      var magentoSelectionKey = new Map();
+      magentoSelectionKey.set('keyInParent', 'selections');
+      magentoSelectionKey.set('type', 'object');
+      magentoSelectionKey.set('key', 'name');
+      magentoKey.set('key', 'title');
+      magentoKey.set('type', 'object');
+      magentoKey.set('nested', magentoSelectionKey);
+
+      var map = this._reverseMapping(magentoCon, magentoKey, claraCon, claraKey);
+      if (!map) {
+        console.error("Auto mapping clara configuration with magento failed");
+        return null;
+      }
+      console.log(map);
+
+      return map;
+    },
+
+
+    // recursively reverse mapping in primary using target as reference
+    _reverseMapping: function reverseMapping(primary, primaryKey, target, targetKey) {
+      // result (using ES6 map)
+      var map = new Map();
+      // save the values in target that already find a matching, to ensure 1-to-1 mapping
+      var valueHasMapped = new Map();
+
+      // complexity = o(n^2), could be reduced to o(nlog(n))
+      for (var pKey in primary) {
+        var primaryValue = primaryKey.get('type') === 'object' ? primary[pKey][primaryKey.get('key')] : primary[pKey];
+        if (!primaryValue) {
+          console.error("Can not read primaryKey from primary");
+          return null;
+        }
+        // search for title in claraCon
+        for (var tKey in target) {
+          var targetValue = targetKey.get('type') === 'object' ? target[tKey][targetkey.get('key')] : target[tKey];
+          if (!targetValue) {
+            console.error("Can not read  targetKey from target");
+            return null;
+          }
+          if (typeof primaryValue !== 'string' || typeof targetValue !== 'string') {
+            console.error("Primary or target attribute value is not a string");
+            return null;
+          }
+          if (primaryValue.includes(targetValue) || targetValue.includes(primaryValue)) {
+            if (valueHasMapped.has(name)) {
+              console.error("Found target attributes with similar names, unable to perform auto mapping");
+              return null;
+            }
+            // find a match
+            valueHasMapped.set(targetValue, true);
+            map.set(targetValue, pKey);
+            // recursively map nested object until primaryKey and targetKey have no 'nested' key
+            if (primaryKey.get('nested') && targetKey.get('nested')) {
+              var nestedMap = reverseMapping(primary[pKey][primaryKey.get('nested').get('keyInParent')],
+                                             primaryKey.get('nested'),
+                                             target[tKey][targetKey.get('nested').get('keyInParent')],
+                                             targetKey.get('nested'));
+              map.set(targetKey.get('nested').get('keyInParent'), nestedMap);
+            }
+          }
+        }
+      }
       return map;
     },
 
