@@ -211,20 +211,22 @@ define([
           }
           if (primaryValue === targetValue) {
             if (valueHasMapped.has(name)) {
-              console.error("Found target attributes with similar names, unable to perform auto mapping");
+              console.error("Found target attributes with same name, unable to perform auto mapping");
               return null;
             }
             // find a match
             valueHasMapped.set(targetValue, true);
-            map.set(targetValue, pKey);
+            var mappedValue = new Map();
+            mappedValue.set('key', pKey);
             // recursively map nested object until primaryKey and targetKey have no 'nested' key
             if (primaryKey.get('nested') && targetKey.get('nested')) {
               var nestedMap = reverseMapping(primary[pKey][primaryKey.get('nested').get('keyInParent')],
                                              primaryKey.get('nested'),
                                              target[tKey][targetKey.get('nested').get('keyInParent')],
                                              targetKey.get('nested'));
-              map.set(targetKey.get('nested').get('keyInParent'), nestedMap);
+              mappedValue.set(targetKey.get('nested').get('keyInParent'), nestedMap);
             }
+            map.set(targetValue, mappedValue);
           }
         }
       }
