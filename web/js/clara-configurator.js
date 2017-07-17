@@ -242,12 +242,12 @@ define([
             mappedValue.set('key', pKey);
             // recursively map nested object until primaryKey and targetKey have no 'nested' key
             if (primaryKey.has('nested') && targetKey.has('nested')) {
-              var nestedMap = target[tKey][targetKey.get('nested').get('keyInParent')] ?
+              var childMap = target[tKey][targetKey.get('nested').get('keyInParent')] ?
                               target[tKey][targetKey.get('nested').get('keyInParent')] :
                               [primaryValue];
               var nestedMap = reverseMapping(primary[pKey][primaryKey.get('nested').get('keyInParent')],
                                                primaryKey.get('nested'),
-                                               nestedMap,
+                                               childMap,
                                                targetKey.get('nested'));
               mappedValue.set(targetKey.get('nested').get('keyInParent'), nestedMap);
             }
