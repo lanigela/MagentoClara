@@ -23,6 +23,8 @@ define([
       claraUUID: ''
     },
 
+    configMap: null,
+
     _init: function init() {
 
     },
@@ -55,7 +57,7 @@ define([
         });
         api.configuration.initConfigurator({ form: 'Default', el: document.getElementById(panelid) });
 
-        self._mappingConfiguration(clara.configuration.getAttributes(), self.options.optionConfig.options);
+        self.configMap = self._mappingConfiguration(clara.configuration.getAttributes(), self.options.optionConfig.options);
         self._createFormFields(self.options.optionConfig.options);
       });
 
@@ -134,6 +136,11 @@ define([
             api.configuration.executeAttribute('Shape (Angled Back)', config['Shape (Angled Back)']);
           }
         }
+
+        // update add-to-cart form
+        console.log(api.configuration.getAttributes());
+        console.log(config);
+        self._updateFormFields(config, self.configMap);
       });
 
 
@@ -234,7 +241,7 @@ define([
             var mappedValue = new Map();
             mappedValue.set('key', pKey);
             // recursively map nested object until primaryKey and targetKey have no 'nested' key
-            if (primaryKey.has('nested') && targetKey.has('nested') && target[tKey][targetKey.get('nested').get('keyInParent')]) {
+            if (primaryKey.has('nested') && targetKey.has('nested')) {
               var nestedMap = reverseMapping(primary[pKey][primaryKey.get('nested').get('keyInParent')],
                                              primaryKey.get('nested'),
                                              target[tKey][targetKey.get('nested').get('keyInParent')],
@@ -280,10 +287,12 @@ define([
 
         // set option name and leave default value empty
         optionEI.setAttribute('name', 'bundle_option[' + key + ']');
+        optionEI.setAttribute('id', 'bundle_option[' + key + ']')
         optionEI.setAttribute('value', '');
         optionEI.setAttribute('type','hidden')
         // set option quantity
         optionQtyEI.setAttribute('name', 'bundle_option_qty[' + key + ']');
+        optionQtyEI.setAttribute('id', 'bundle_option_qty[' + key + ']');
         optionQtyEI.setAttribute('value', '');
         optionQtyEI.setAttribute('type', 'hidden');
         // append to form
@@ -295,10 +304,31 @@ define([
     },
 
     // update form fields when configuration change
-    _updateFormFields(map) {
-      // update dropdowns
-      // update size
+    _updateFormFields: function updateFormFields(config, map) {
+      for (var attr in config) {
+        if (map.has(attr)) {
+          var attrId = map.get(attr).get('key');
+          if (map.get(attr).has('values')) {
+            // update dropdowns
+            var attrValue = map.get(attr).get('values').get(config[attr]).get('key');
+            document.getElementById('bundle_option[' + attrId + ']').setAttribute('value', attrValue);
+            document.getElementById('bundle_option_qty[' + attrId + ']').setAttribute('value', '1');
+          }
+          else {
+            // update size
+            var attrValue = map.get(attr).get('key');
+            document.getElementById('bundle_option[' + attrId + ']').setAttribute('value', attrValue);
+            document.getElementById('bundle_option_qty[' + attrId + ']').setAttribute('value', config[attr]);
+          }
+
+        }
+        else {
+          console.warn(attr + " not found in config map");
+        }
+      }
       // update volume price
+      //var volumeId = map.get('Volume_Price').get('key');
+      //var volumeValue =
     }
 
   });
