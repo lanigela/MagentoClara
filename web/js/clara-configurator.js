@@ -168,9 +168,11 @@ define([
       var magentoSelectionKey = new Map();
       magentoSelectionKey.set('keyInParent', 'selections');
       magentoSelectionKey.set('type', 'object');
+      magentoSelectionKey.set('matching', 'endsWith');
       magentoSelectionKey.set('key', 'name');
       magentoKey.set('key', 'title');
       magentoKey.set('type', 'object');
+      magentoKey.set('matching', 'exactly');
       magentoKey.set('nested', magentoSelectionKey);
 
       var map = this._reverseMapping(magentoCon, magentoKey, claraCon, claraKey);
@@ -209,7 +211,14 @@ define([
             console.error("Primary or target attribute value is not a string");
             return null;
           }
-          if (primaryValue === targetValue) {
+          var matching = false;
+          if (primaryKey.get('matching') === 'exactly') {
+            matching = (primaryValue === targetValue);
+          }
+          else if(primaryKey.get('matching') === 'endsWith') {
+            matching = (primaryValue.endsWith(targetValue));
+          }
+          if (matching) {
             if (valueHasMapped.has(name)) {
               console.error("Found target attributes with same name, unable to perform auto mapping");
               return null;
