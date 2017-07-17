@@ -175,6 +175,12 @@ define([
       magentoKey.set('matching', 'exactly');
       magentoKey.set('nested', magentoSelectionKey);
 
+      // add volume price to claraCon
+      var volumePrice = {
+        name: "Volume_Price"
+      };
+      claraCon.push(volumePrice);
+
       var map = this._reverseMapping(magentoCon, magentoKey, claraCon, claraKey);
       if (!map) {
         console.error("Auto mapping clara configuration with magento failed");
@@ -228,7 +234,7 @@ define([
             var mappedValue = new Map();
             mappedValue.set('key', pKey);
             // recursively map nested object until primaryKey and targetKey have no 'nested' key
-            if (primaryKey.has('nested') && targetKey.has('nested')) {
+            if (primaryKey.has('nested') && targetKey.has('nested') && target[tKey][targetKey.get('nested').get('keyInParent')]) {
               var nestedMap = reverseMapping(primary[pKey][primaryKey.get('nested').get('keyInParent')],
                                              primaryKey.get('nested'),
                                              target[tKey][targetKey.get('nested').get('keyInParent')],
