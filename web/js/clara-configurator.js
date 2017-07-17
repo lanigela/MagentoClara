@@ -338,8 +338,9 @@ define([
         }
       }
       // update volume price
+      var materialPrice = config['Cover Material'] === "Leather" ? "Leather_Price" : "Fabric_Price";
       var volumeId = map.get('Volume_Price').get('key');
-      var volumeValue = map.get('Volume_Price').get('values').get(attr).get('key');
+      var volumeValue = map.get('Volume_Price').get('values').get(materialPrice).get('key');
       document.getElementById('bundle_option[' + volumeId + ']').setAttribute('value', volumeValue);
       document.getElementById('bundle_option_qty[' + volumeId + ']').setAttribute('value', volume);
     }
