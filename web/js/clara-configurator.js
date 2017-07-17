@@ -68,7 +68,7 @@ define([
         Depth: 8,
       };
 
-      var dimensions = ['Length', 'Width', 'Depth'];
+      var dimensions = ['Height', 'Width (A)', 'Depth'];
 
       var selfConfigChange = false;
 
@@ -140,7 +140,7 @@ define([
         // update add-to-cart form
         console.log(api.configuration.getAttributes());
         console.log(config);
-        self._updateFormFields(config, self.configMap);
+        self._updateFormFields(config, self.configMap, dimensions);
       });
 
 
@@ -311,13 +311,15 @@ define([
     },
 
     // update form fields when configuration change
-    _updateFormFields: function updateFormFields(config, map) {
+    _updateFormFields: function updateFormFields(config, map, dimensions) {
+      var volume = 1;
       for (var attr in config) {
         if (map.has(attr)) {
           var attrId = map.get(attr).get('key');
-          if (this._isNumber(config[attr])){
+          if (dimensions.includes(attr)){
             // update size
-            var attrValue = map.get(attr).get('key');
+            volume = config[attr] * volume;
+            var attrValue = map.get(attr).get('values').get(attr).get('key');
             document.getElementById('bundle_option[' + attrId + ']').setAttribute('value', attrValue);
             document.getElementById('bundle_option_qty[' + attrId + ']').setAttribute('value', config[attr]);
           }
@@ -335,8 +337,10 @@ define([
         }
       }
       // update volume price
-      //var volumeId = map.get('Volume_Price').get('key');
-      //var volumeValue =
+      var volumeId = map.get('Volume_Price').get('key');
+      var volumeValue = map.get('Volume_Price'.get('values').get(attr).get('key'));
+      document.getElementById('bundle_option[' + volumeId + ']').setAttribute('value', volumeValue);
+      document.getElementById('bundle_option_qty[' + volumeId + ']').setAttribute('value', volume);
     }
 
   });
