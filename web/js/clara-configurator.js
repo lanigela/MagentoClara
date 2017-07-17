@@ -150,9 +150,8 @@ define([
     *               - key
     *               - selections[name]
     *                                  - key
-    * Matching rule: title.includes(name) || name.includes(title)
     *
-    * Note: title and name in config and options are similar strings but they could be different
+    * Note: title and name in config and options have to be exactly the name string
     * Name and title are unique
     * Make sure it's an one-to-one mapping, otherwise report error
     */
@@ -210,7 +209,7 @@ define([
             console.error("Primary or target attribute value is not a string");
             return null;
           }
-          if (primaryValue.includes(targetValue) || targetValue.includes(primaryValue)) {
+          if (primaryValue === targetValue) {
             if (valueHasMapped.has(name)) {
               console.error("Found target attributes with similar names, unable to perform auto mapping");
               return null;
