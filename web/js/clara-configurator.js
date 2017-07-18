@@ -23,11 +23,13 @@ define([
       claraUUID: ''
     },
 
-    _init: function initClaraConfigurator() {
+    configMap: null,
+
+    _init: function init() {
 
     },
 
-    _create: function createClaraConfigurator() {
+    _create: function create() {
       // init clara player
       console.log("ClaraUUID=" + this.options.claraUUID);
       var clara = claraPlayer('clara-player');
@@ -38,7 +40,7 @@ define([
     },
 
 
-    _initClaraPlayer(clara, uuid, panelid) {
+    _initClaraPlayer: function initClaraPlayer(clara, uuid, panelid) {
       /*
       * Copied from David's cillowsDemo.js
       */
@@ -55,7 +57,7 @@ define([
         });
         api.configuration.initConfigurator({ form: 'Default', el: document.getElementById(panelid) });
 
-        self._mappingConfiguration(clara);
+        self.configMap = self._mappingConfiguration(clara.configuration.getAttributes(), self.options.optionConfig.options);
         self._createFormFields(self.options.optionConfig.options);
       });
 
@@ -66,7 +68,7 @@ define([
         Depth: 8,
       };
 
-      var dimensions = ['Length', 'Width', 'Depth'];
+      var dimensions = ['Height', 'Width (A)', 'Depth'];
 
       var selfConfigChange = false;
 
@@ -83,14 +85,14 @@ define([
           if (config['Pillow Type'] === 'Back' || config['Pillow Type'] === 'Back (Angled)') {
             maxDepth = 45;
           }
-          api.configuration.setAttribute('Depth (cm)', { maxValue: maxDepth });
+          api.configuration.setAttribute('Depth', { maxValue: maxDepth });
         }
 
         // Resizing is handled manually here for convenience/flexibility over configurator actions
-        if (changedName === 'Width (cm)' || changedName === 'Length (cm)' || changedName === 'Depth (cm)') {
-          var widthHalf = (Number(config['Width (cm)']) - defaultDimensions.Width) / 100 / 2;
-          var lengthHalf = (Number(config['Length (cm)']) - defaultDimensions.Length) / 100 / 2;
-          var depthHalf = (Number(config['Depth (cm)']) - defaultDimensions.Depth) / 100 / 2;
+        if (changedName === 'Width (A)' || changedName === 'Length' || changedName === 'Depth') {
+          var widthHalf = (Number(config['Width (A)']) - defaultDimensions.Width) / 100 / 2;
+          var lengthHalf = (Number(config['Length']) - defaultDimensions.Length) / 100 / 2;
+          var depthHalf = (Number(config['Depth']) - defaultDimensions.Depth) / 100 / 2;
 
           // Stretch pillows and attachments along the appropriate dimensions
           ['bottom*', 'back*', 'mesh_elastic', 'mesh_Velcro_strip', 'pocket*'].forEach(function (nodeName) {
@@ -134,6 +136,11 @@ define([
             api.configuration.executeAttribute('Shape (Angled Back)', config['Shape (Angled Back)']);
           }
         }
+
+        // update add-to-cart form
+        console.log(api.configuration.getAttributes());
+        console.log(config);
+        self._updateFormFields(config, self.configMap, dimensions);
       });
 
 
@@ -150,13 +157,106 @@ define([
     *               - key
     *               - selections[name]
     *                                  - key
-    * Note: title and name in config and options are similar strings but they could be different
+    *
+    * Note: title and name in config and options have to be exactly the name string
+    * Name and title are unique
+    * Make sure it's an one-to-one mapping, otherwise report error
     */
-    _mappingConfiguration(clara) {
-      console.log(clara.configuration.getAttributes());
-      console.log(clara.configuration.getConfiguration());
+    _mappingConfiguration: function mappingConfiguration(claraCon, magentoCon) {
+      var claraKey = new Map();
+      var claraSelectionKey = new Map();
+      claraSelectionKey.set('keyInParent', 'values');
+      claraSelectionKey.set('type', 'array');
+      claraKey.set('key', 'name');
+      claraKey.set('type', 'object');
+      claraKey.set('nested', claraSelectionKey);
 
-      var map = {};
+      var magentoKey = new Map();
+      var magentoSelectionKey = new Map();
+      magentoSelectionKey.set('keyInParent', 'selections');
+      magentoSelectionKey.set('type', 'object');
+      magentoSelectionKey.set('matching', 'endsWith');
+      magentoSelectionKey.set('key', 'name');
+      magentoKey.set('key', 'title');
+      magentoKey.set('type', 'object');
+      magentoKey.set('matching', 'exactly');
+      magentoKey.set('nested', magentoSelectionKey);
+
+      // add volume price to claraCon
+      var volumePrice = {
+        name: "Volume_Price",
+        values: ['Leather_Price', 'Fabric_Price']
+      };
+      claraCon.push(volumePrice);
+
+      var map = this._reverseMapping(magentoCon, magentoKey, claraCon, claraKey);
+      if (!map) {
+        console.error("Auto mapping clara configuration with magento failed");
+        return null;
+      }
+      console.log(map);
+
+      return map;
+    },
+
+
+    // recursively reverse mapping in primary using target as reference
+    _reverseMapping: function reverseMapping(primary, primaryKey, target, targetKey) {
+      // result (using ES6 map)
+      var map = new Map();
+      // save the values in target that already find a matching, to ensure 1-to-1 mapping
+      var valueHasMapped = new Map();
+
+      // complexity = o(n^2), could be reduced to o(nlog(n))
+      for (var pKey in primary) {
+        var primaryValue = primaryKey.get('type') === 'object' ? primary[pKey][primaryKey.get('key')] : primary[pKey];
+        if (!primaryValue) {
+          console.error("Can not read primaryKey from primary");
+          return null;
+        }
+        // search for title in claraCon
+        for (var tKey in target) {
+          var targetValue = targetKey.get('type') === 'object' ? target[tKey][targetKey.get('key')] : target[tKey];
+          if (!targetValue) {
+            console.error("Can not read  targetKey from target");
+            return null;
+          }
+          if (typeof primaryValue !== 'string' || typeof targetValue !== 'string') {
+            console.error("Primary or target attribute value is not a string");
+            return null;
+          }
+          var matching = false;
+          if (primaryKey.get('matching') === 'exactly') {
+            matching = (primaryValue === targetValue);
+          }
+          else if(primaryKey.get('matching') === 'endsWith') {
+            matching = (primaryValue.endsWith(targetValue));
+          }
+          if (matching) {
+            if (valueHasMapped.has(name)) {
+              console.error("Found target attributes with same name, unable to perform auto mapping");
+              return null;
+            }
+            // find a match
+            valueHasMapped.set(targetValue, true);
+            var mappedValue = new Map();
+            mappedValue.set('key', pKey);
+            // recursively map nested object until primaryKey and targetKey have no 'nested' key
+            if (primaryKey.has('nested') && targetKey.has('nested')) {
+              var childMap = target[tKey][targetKey.get('nested').get('keyInParent')] ?
+                              target[tKey][targetKey.get('nested').get('keyInParent')] :
+                              [primaryValue];
+              var nestedMap = reverseMapping(primary[pKey][primaryKey.get('nested').get('keyInParent')],
+                                               primaryKey.get('nested'),
+                                               childMap,
+                                               targetKey.get('nested'));
+              mappedValue.set(targetKey.get('nested').get('keyInParent'), nestedMap);
+            }
+            map.set(targetValue, mappedValue);
+            break;
+          }
+        }
+      }
       return map;
     },
 
@@ -192,10 +292,12 @@ define([
 
         // set option name and leave default value empty
         optionEI.setAttribute('name', 'bundle_option[' + key + ']');
+        optionEI.setAttribute('id', 'bundle_option[' + key + ']')
         optionEI.setAttribute('value', '');
         optionEI.setAttribute('type','hidden')
         // set option quantity
         optionQtyEI.setAttribute('name', 'bundle_option_qty[' + key + ']');
+        optionQtyEI.setAttribute('id', 'bundle_option_qty[' + key + ']');
         optionQtyEI.setAttribute('value', '');
         optionQtyEI.setAttribute('type', 'hidden');
         // append to form
@@ -206,11 +308,42 @@ define([
       console.log("done");
     },
 
+    _isNumber: function isNumber(n) {
+      return !isNaN(parseFloat(n)) && isFinite(n);
+    },
+
     // update form fields when configuration change
-    _updateFormFields(map) {
-      // update dropdowns
-      // update size
+    _updateFormFields: function updateFormFields(config, map, dimensions) {
+      var volume = 1;
+      for (var attr in config) {
+        if (map.has(attr)) {
+          var attrId = map.get(attr).get('key');
+          if (dimensions.includes(attr)){
+            // update size
+            volume = config[attr] * volume;
+            var attrValue = map.get(attr).get('values').get(attr).get('key');
+            document.getElementById('bundle_option[' + attrId + ']').setAttribute('value', attrValue);
+            document.getElementById('bundle_option_qty[' + attrId + ']').setAttribute('value', config[attr]);
+          }
+          else {
+            // update dropdowns
+            var attrValue = map.get(attr).get('values').get(config[attr]).get('key');
+            document.getElementById('bundle_option[' + attrId + ']').setAttribute('value', attrValue);
+            document.getElementById('bundle_option_qty[' + attrId + ']').setAttribute('value', '1');
+          }
+
+
+        }
+        else {
+          console.warn(attr + " not found in config map");
+        }
+      }
       // update volume price
+      var materialPrice = config['Cover Material'] === "Leather" ? "Leather_Price" : "Fabric_Price";
+      var volumeId = map.get('Volume_Price').get('key');
+      var volumeValue = map.get('Volume_Price').get('values').get(materialPrice).get('key');
+      document.getElementById('bundle_option[' + volumeId + ']').setAttribute('value', volumeValue);
+      document.getElementById('bundle_option_qty[' + volumeId + ']').setAttribute('value', volume);
     }
 
   });
