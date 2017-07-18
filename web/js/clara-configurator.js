@@ -150,7 +150,7 @@ define([
     },
 
     _createConfigType: function createConfigType(claraConfig) {
-      configType = new Map();
+      var configType = new Map();
       for (var key in claraConfig) {
         configType.set(claraConfig[key].name, claraConfig[key].type);
       }
