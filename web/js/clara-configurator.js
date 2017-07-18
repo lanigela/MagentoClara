@@ -57,8 +57,8 @@ define([
         });
         api.configuration.initConfigurator({ form: 'Default', el: document.getElementById(panelid) });
 
-        //self.configMap = self._mappingConfiguration(clara.configuration.getAttributes(), self.options.optionConfig.options);
-        //self._createFormFields(self.options.optionConfig.options);
+        self.configMap = self._mappingConfiguration(clara.configuration.getAttributes(), self.options.optionConfig.options);
+        self._createFormFields(self.options.optionConfig.options);
       });
 
 
@@ -140,7 +140,7 @@ define([
         // update add-to-cart form
         //console.log(api.configuration.getAttributes());
         //console.log(config);
-        //self._updateFormFields(config, self.configMap, dimensions);
+        self._updateFormFields(config, self.configMap, dimensions);
       });
 
 
@@ -244,9 +244,20 @@ define([
             mappedValue.set('key', pKey);
             // recursively map nested object until primaryKey and targetKey have no 'nested' key
             if (primaryKey.has('nested') && targetKey.has('nested')) {
-              var childMap = target[tKey][targetKey.get('nested').get('keyInParent')] ?
-                              target[tKey][targetKey.get('nested').get('keyInParent')] :
-                              [primaryValue];
+              var childMap = null;
+              switch (target[tKey].type) {
+                case 'Number':
+                  childMap = [primaryValue];
+                  break;
+                case 'Options':
+                  childMap = target[tKey][targetKey.get('nested').get('keyInParent')]
+                  break;
+                case 'Boolean':
+                  childMap = ['true', 'false'];
+                  break;
+                case 'Color':
+                  break;
+              }
               var nestedMap = reverseMapping(primary[pKey][primaryKey.get('nested').get('keyInParent')],
                                                primaryKey.get('nested'),
                                                childMap,
