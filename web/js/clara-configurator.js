@@ -25,6 +25,8 @@ define([
 
     configMap: null,
 
+    configType: null,
+
     _init: function init() {
 
     },
@@ -58,6 +60,7 @@ define([
         api.configuration.initConfigurator({ form: 'Default', el: document.getElementById(panelid) });
 
         self.configMap = self._mappingConfiguration(clara.configuration.getAttributes(), self.options.optionConfig.options);
+        self.configType = self._createConfigType(clara.configuration.getAttributes());
         self._createFormFields(self.options.optionConfig.options);
       });
 
@@ -140,10 +143,18 @@ define([
         // update add-to-cart form
         //console.log(api.configuration.getAttributes());
         //console.log(config);
-        self._updateFormFields(config, self.configMap, dimensions);
+        self._updateFormFields(config, self.configMap, self.configType);
       });
 
 
+    },
+
+    _createConfigType: function createConfigType(claraConfig) {
+      configType = new Map();
+      for (var key in claraConfig) {
+        configType.set(claraConfig[key].name, claraConfig[key].type);
+      }
+      return configType;
     },
 
     // map clara configuration with magento (reverse map of this.options.optionConfig.options)
@@ -329,23 +340,33 @@ define([
     },
 
     // update form fields when configuration change
-    _updateFormFields: function updateFormFields(config, map, dimensions) {
+    _updateFormFields: function updateFormFields(config, map, configType) {
       var volume = 1;
       for (var attr in config) {
         if (map.has(attr)) {
           var attrId = map.get(attr).get('key');
-          if (dimensions.includes(attr)){
-            // update size
-            volume = config[attr] * volume;
-            var attrValue = map.get(attr).get('values').get(attr).get('key');
-            document.getElementById('bundle_option[' + attrId + ']').setAttribute('value', attrValue);
-            document.getElementById('bundle_option_qty[' + attrId + ']').setAttribute('value', config[attr]);
-          }
-          else {
-            // update dropdowns
-            var attrValue = map.get(attr).get('values').get(config[attr]).get('key');
-            document.getElementById('bundle_option[' + attrId + ']').setAttribute('value', attrValue);
-            document.getElementById('bundle_option_qty[' + attrId + ']').setAttribute('value', '1');
+          switch (configType.get(attr)) {
+            case 'Number':
+              // update number
+              volume = config[attr] * volume;
+              var attrValue = map.get(attr).get('values').get(attr).get('key');
+              document.getElementById('bundle_option[' + attrId + ']').setAttribute('value', attrValue);
+              document.getElementById('bundle_option_qty[' + attrId + ']').setAttribute('value', config[attr]);
+              break;
+            case 'Options':
+              // update options
+              var attrValue = map.get(attr).get('values').get(config[attr]).get('key');
+              document.getElementById('bundle_option[' + attrId + ']').setAttribute('value', attrValue);
+              document.getElementById('bundle_option_qty[' + attrId + ']').setAttribute('value', '1');
+              break;
+            case 'Boolean':
+              // update boolean
+              var attrValue = map.get(attr).get('values').get(config[attr].toString()).get('key');
+              document.getElementById('bundle_option[' + attrId + ']').setAttribute('value', attrValue);
+              document.getElementById('bundle_option_qty[' + attrId + ']').setAttribute('value', '1');
+              break;
+            case 'Color':
+              break;
           }
 
 
