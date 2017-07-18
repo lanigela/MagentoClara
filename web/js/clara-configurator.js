@@ -57,8 +57,8 @@ define([
         });
         api.configuration.initConfigurator({ form: 'Default', el: document.getElementById(panelid) });
 
-        self.configMap = self._mappingConfiguration(clara.configuration.getAttributes(), self.options.optionConfig.options);
-        self._createFormFields(self.options.optionConfig.options);
+        //self.configMap = self._mappingConfiguration(clara.configuration.getAttributes(), self.options.optionConfig.options);
+        //self._createFormFields(self.options.optionConfig.options);
       });
 
 
@@ -138,9 +138,9 @@ define([
         }
 
         // update add-to-cart form
-        console.log(api.configuration.getAttributes());
-        console.log(config);
-        self._updateFormFields(config, self.configMap, dimensions);
+        //console.log(api.configuration.getAttributes());
+        //console.log(config);
+        //self._updateFormFields(config, self.configMap, dimensions);
       });
 
 
@@ -215,6 +215,7 @@ define([
           return null;
         }
         // search for title in claraCon
+        var foundMatching = false;
         for (var tKey in target) {
           var targetValue = targetKey.get('type') === 'object' ? target[tKey][targetKey.get('key')] : target[tKey];
           if (!targetValue) {
@@ -253,8 +254,12 @@ define([
               mappedValue.set(targetKey.get('nested').get('keyInParent'), nestedMap);
             }
             map.set(targetValue, mappedValue);
+            foundMatching = true;
             break;
           }
+        }
+        if (!foundMatching) {
+          console.warn("Can not find primary value " + primaryValue + " in target config");
         }
       }
       return map;
