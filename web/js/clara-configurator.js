@@ -196,6 +196,7 @@ define([
       // add volume price to claraCon
       var volumePrice = {
         name: "Volume_Price",
+        type: 'Options',
         values: ['Leather_Price', 'Fabric_Price']
       };
       claraCon.push(volumePrice);
