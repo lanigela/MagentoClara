@@ -253,6 +253,7 @@ define([
               mappedValue.set(targetKey.get('nested').get('keyInParent'), nestedMap);
             }
             map.set(targetValue, mappedValue);
+            break;
           }
         }
       }
