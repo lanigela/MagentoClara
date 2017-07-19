@@ -143,7 +143,7 @@ define([
         // update add-to-cart form
         console.log(api.configuration.getAttributes());
         console.log(config);
-        self._updateFormFields(config, self.configMap, self.configType);
+        self._updateFormFields(config, self.configMap, self.configType, dimensions);
       });
 
 
@@ -349,7 +349,7 @@ define([
     },
 
     // update form fields when configuration change
-    _updateFormFields: function updateFormFields(config, map, configType) {
+    _updateFormFields: function updateFormFields(config, map, configType, dimensions) {
       var volume = 1;
       for (var attr in config) {
         if (map.has(attr)) {
@@ -357,13 +357,20 @@ define([
           switch (configType.get(attr)) {
             case 'Number':
               // update number
-              volume = config[attr] * volume;
+              if (dimensions.includes(attr)) {
+                volume = config[attr] * volume;
+              }
               var attrValue = map.get(attr).get('values').get(attr).get('key');
               document.getElementById('bundle_option[' + attrId + ']').setAttribute('value', attrValue);
               document.getElementById('bundle_option_qty[' + attrId + ']').setAttribute('value', config[attr]);
               break;
             case 'Options':
               // update options
+              // choose from leather or fabric
+              if (attr === "Fabric Options" && config["Cover Material"] === "Leather" ||
+                  attr === "Leather Options" && config["Cover Material"] === "Fabric") {
+                break;
+              }
               var attrValue = map.get(attr).get('values').get(config[attr]).get('key');
               document.getElementById('bundle_option[' + attrId + ']').setAttribute('value', attrValue);
               document.getElementById('bundle_option_qty[' + attrId + ']').setAttribute('value', '1');
