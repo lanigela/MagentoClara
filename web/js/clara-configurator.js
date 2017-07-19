@@ -25,6 +25,8 @@ define([
 
     configMap: null,
 
+    configType: null,
+
     _init: function init() {
 
     },
@@ -58,6 +60,7 @@ define([
         api.configuration.initConfigurator({ form: 'Default', el: document.getElementById(panelid) });
 
         self.configMap = self._mappingConfiguration(clara.configuration.getAttributes(), self.options.optionConfig.options);
+        self.configType = self._createConfigType(clara.configuration.getAttributes());
         self._createFormFields(self.options.optionConfig.options);
       });
 
@@ -140,10 +143,18 @@ define([
         // update add-to-cart form
         console.log(api.configuration.getAttributes());
         console.log(config);
-        self._updateFormFields(config, self.configMap, dimensions);
+        self._updateFormFields(config, self.configMap, self.configType, dimensions);
       });
 
 
+    },
+
+    _createConfigType: function createConfigType(claraConfig) {
+      var configType = new Map();
+      for (var key in claraConfig) {
+        configType.set(claraConfig[key].name, claraConfig[key].type);
+      }
+      return configType;
     },
 
     // map clara configuration with magento (reverse map of this.options.optionConfig.options)
@@ -185,6 +196,7 @@ define([
       // add volume price to claraCon
       var volumePrice = {
         name: "Volume_Price",
+        type: 'Options',
         values: ['Leather_Price', 'Fabric_Price']
       };
       claraCon.push(volumePrice);
@@ -215,6 +227,7 @@ define([
           return null;
         }
         // search for title in claraCon
+        var foundMatching = false;
         for (var tKey in target) {
           var targetValue = targetKey.get('type') === 'object' ? target[tKey][targetKey.get('key')] : target[tKey];
           if (!targetValue) {
@@ -233,7 +246,7 @@ define([
             matching = (primaryValue.endsWith(targetValue));
           }
           if (matching) {
-            if (valueHasMapped.has(name)) {
+            if (valueHasMapped.has(targetValue)) {
               console.error("Found target attributes with same name, unable to perform auto mapping");
               return null;
             }
@@ -243,9 +256,20 @@ define([
             mappedValue.set('key', pKey);
             // recursively map nested object until primaryKey and targetKey have no 'nested' key
             if (primaryKey.has('nested') && targetKey.has('nested')) {
-              var childMap = target[tKey][targetKey.get('nested').get('keyInParent')] ?
-                              target[tKey][targetKey.get('nested').get('keyInParent')] :
-                              [primaryValue];
+              var childMap = null;
+              switch (target[tKey].type) {
+                case 'Number':
+                  childMap = [primaryValue];
+                  break;
+                case 'Options':
+                  childMap = target[tKey][targetKey.get('nested').get('keyInParent')]
+                  break;
+                case 'Boolean':
+                  childMap = ['true', 'false'];
+                  break;
+                case 'Color':
+                  break;
+              }
               var nestedMap = reverseMapping(primary[pKey][primaryKey.get('nested').get('keyInParent')],
                                                primaryKey.get('nested'),
                                                childMap,
@@ -253,8 +277,20 @@ define([
               mappedValue.set(targetKey.get('nested').get('keyInParent'), nestedMap);
             }
             map.set(targetValue, mappedValue);
+            foundMatching = true;
             break;
           }
+        }
+        if (!foundMatching) {
+          console.warn("Can not find primary value " + primaryValue + " in target config");
+        }
+      }
+
+      // check all target to see if all target value has been mapped
+      for (var tKey in target) {
+        var targetValue = targetKey.get('type') === 'object' ? target[tKey][targetKey.get('key')] : target[tKey];
+        if (!valueHasMapped.has(targetValue)) {
+          console.warn("Target value " + targetValue + " has not been mapped!");
         }
       }
       return map;
@@ -313,23 +349,40 @@ define([
     },
 
     // update form fields when configuration change
-    _updateFormFields: function updateFormFields(config, map, dimensions) {
+    _updateFormFields: function updateFormFields(config, map, configType, dimensions) {
       var volume = 1;
       for (var attr in config) {
         if (map.has(attr)) {
           var attrId = map.get(attr).get('key');
-          if (dimensions.includes(attr)){
-            // update size
-            volume = config[attr] * volume;
-            var attrValue = map.get(attr).get('values').get(attr).get('key');
-            document.getElementById('bundle_option[' + attrId + ']').setAttribute('value', attrValue);
-            document.getElementById('bundle_option_qty[' + attrId + ']').setAttribute('value', config[attr]);
-          }
-          else {
-            // update dropdowns
-            var attrValue = map.get(attr).get('values').get(config[attr]).get('key');
-            document.getElementById('bundle_option[' + attrId + ']').setAttribute('value', attrValue);
-            document.getElementById('bundle_option_qty[' + attrId + ']').setAttribute('value', '1');
+          switch (configType.get(attr)) {
+            case 'Number':
+              // update number
+              if (dimensions.includes(attr)) {
+                volume = config[attr] * volume;
+              }
+              var attrValue = map.get(attr).get('values').get(attr).get('key');
+              document.getElementById('bundle_option[' + attrId + ']').setAttribute('value', attrValue);
+              document.getElementById('bundle_option_qty[' + attrId + ']').setAttribute('value', config[attr]);
+              break;
+            case 'Options':
+              // update options
+              // choose from leather or fabric
+              if (attr === "Fabric Options" && config["Cover Material"] === "Leather" ||
+                  attr === "Leather Options" && config["Cover Material"] === "Fabric") {
+                break;
+              }
+              var attrValue = map.get(attr).get('values').get(config[attr]).get('key');
+              document.getElementById('bundle_option[' + attrId + ']').setAttribute('value', attrValue);
+              document.getElementById('bundle_option_qty[' + attrId + ']').setAttribute('value', '1');
+              break;
+            case 'Boolean':
+              // update boolean
+              var attrValue = map.get(attr).get('values').get(config[attr].toString()).get('key');
+              document.getElementById('bundle_option[' + attrId + ']').setAttribute('value', attrValue);
+              document.getElementById('bundle_option_qty[' + attrId + ']').setAttribute('value', '1');
+              break;
+            case 'Color':
+              break;
           }
 
 
