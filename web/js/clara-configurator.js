@@ -141,8 +141,8 @@ define([
         }
 
         // update add-to-cart form
-        //console.log(api.configuration.getAttributes());
-        //console.log(config);
+        console.log(api.configuration.getAttributes());
+        console.log(config);
         self._updateFormFields(config, self.configMap, self.configType);
       });
 
@@ -246,7 +246,7 @@ define([
             matching = (primaryValue.endsWith(targetValue));
           }
           if (matching) {
-            if (valueHasMapped.has(name)) {
+            if (valueHasMapped.has(targetValue)) {
               console.error("Found target attributes with same name, unable to perform auto mapping");
               return null;
             }
@@ -283,6 +283,14 @@ define([
         }
         if (!foundMatching) {
           console.warn("Can not find primary value " + primaryValue + " in target config");
+        }
+      }
+
+      // check all target to see if all target value has been mapped
+      for (var tKey in target) {
+        var targetValue = targetKey.get('type') === 'object' ? target[tKey][targetKey.get('key')] : target[tKey];
+        if (!valueHasMapped.has(targetValue)) {
+          console.warn("Target value " + targetValue + " has not been mapped!");
         }
       }
       return map;
